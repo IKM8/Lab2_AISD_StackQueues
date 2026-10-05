@@ -3,7 +3,7 @@ PROGRAM StackQueues;
   PascalABC.NET 4.0
   Группа ПС-21. Габдуллин Марат
   2 Лабораторная работа
-  Вариант 15.
+  Вариант 18.
   Организовать в основной памяти с помощью указателей стек из очередей.
   Обеспечить операции ведения очереди из вершины стека, расширения и
   сокращения стека, выдачи содержимого стека (9).
@@ -49,7 +49,8 @@ BEGIN
   NEW(P);
   P^.Key := C;
   P^.Next := NIL;
-  IF Q.Head = NIL THEN
+  IF Q.Head = NIL
+  THEN
     Q.Head := P
   ELSE
     Q.Tail^.Next := P;
@@ -61,18 +62,20 @@ FUNCTION Dequeue(VAR Q: Queue; VAR C: CHAR): BOOLEAN;
 VAR
   P: QPtr;
 BEGIN
-  IF Q.Head = NIL THEN
+  IF Q.Head = NIL
+  THEN
     Dequeue := FALSE
   ELSE
-  BEGIN
-    C := Q.Head^.Key;
-    P := Q.Head;
-    Q.Head := Q.Head^.Next;
-    IF Q.Head = NIL THEN
-      Q.Tail := NIL;
-    DISPOSE(P);
-    Dequeue := TRUE;
-  END;
+    BEGIN
+      C := Q.Head^.Key;
+      P := Q.Head;
+      Q.Head := Q.Head^.Next;
+      IF Q.Head = NIL
+      THEN
+        Q.Tail := NIL;
+      DISPOSE(P);
+      Dequeue := TRUE;
+    END;
 END;
 
 { очищает очередь }
@@ -80,12 +83,13 @@ PROCEDURE ClearQueue(VAR Q: Queue);
 VAR
   P: QPtr;
 BEGIN
-  WHILE Q.Head <> NIL DO
-  BEGIN
-    P := Q.Head;
-    Q.Head := Q.Head^.Next;
-    DISPOSE(P);
-  END;
+  WHILE Q.Head <> NIL
+  DO
+    BEGIN
+      P := Q.Head;
+      Q.Head := Q.Head^.Next;
+      DISPOSE(P);
+    END;
   Q.Tail := NIL;
 END;
 
@@ -105,13 +109,14 @@ PROCEDURE PopStack;
 VAR
   P: SPtr;
 BEGIN
-  IF Top <> NIL THEN
-  BEGIN
-    P := Top;
-    Top := Top^.Next;
-    ClearQueue(P^.Q);
-    DISPOSE(P);
-  END;
+  IF Top <> NIL
+  THEN
+    BEGIN
+      P := Top;
+      Top := Top^.Next;
+      ClearQueue(P^.Q);
+      DISPOSE(P);
+    END;
 END;
 
 { выдача содержимого стека }
@@ -120,24 +125,27 @@ VAR
   S: SPtr;
   Q: QPtr;
 BEGIN
-  IF Top = NIL THEN
+  IF Top = NIL
+  THEN
     WRITELN('Стек пуст.')
   ELSE
-  BEGIN
-    S := Top;
-    WHILE S <> NIL DO
     BEGIN
-      WRITE('Очередь: ');
-      Q := S^.Q.Head;
-      WHILE Q <> NIL DO
-      BEGIN
-        WRITE(Q^.Key, ' ');
-        Q := Q^.Next;
-      END;
-      WRITELN;
-      S := S^.Next;
+      S := Top;
+      WHILE S <> NIL
+      DO
+        BEGIN
+          WRITE('Очередь: ');
+          Q := S^.Q.Head;
+          WHILE Q <> NIL
+          DO
+            BEGIN
+              WRITE(Q^.Key, ' ');
+              Q := Q^.Next;
+            END;
+          WRITELN;
+          S := S^.Next;
+        END;
     END;
-  END;
 END;
 
 { загрузка начальных очередей из файла: каждая строка - одна очередь }
@@ -155,13 +163,15 @@ BEGIN
     HALT(1);
   END;
 
-  WHILE NOT EOF(F) DO
-  BEGIN
-    READLN(F, S);
-    PushStack;
-    FOR J := 1 TO LENGTH(S) DO
-      Enqueue(Top^.Q, S[J]);
-  END;
+  WHILE NOT EOF(F)
+  DO
+    BEGIN
+      READLN(F, S);
+      PushStack;
+      FOR J := 1 TO LENGTH(S)
+      DO
+        Enqueue(Top^.Q, S[J]);
+    END;
   CLOSE(F);
 END;
 
@@ -173,57 +183,76 @@ BEGIN
   LoadFromFile(FileName);
 
   Again := TRUE;
-  WHILE Again DO
-  BEGIN
-    WRITELN;
-    WRITELN('1 - добавить элемент в очередь на вершине стека');
-    WRITELN('2 - извлечь элемент из очереди на вершине стека');
-    WRITELN('3 - расширить стек (добавить пустую очередь)');
-    WRITELN('4 - сократить стек (убрать верхнюю очередь)');
-    WRITELN('5 - показать содержимое стека');
-    WRITELN('6 - выход');
-    WRITE('Ваш выбор: ');
-    READLN(Ans);
+  WHILE Again
+  DO
+    BEGIN
+      WRITELN;
+      WRITELN('1 - добавить элемент в очередь на вершине стека');
+      WRITELN('2 - извлечь элемент из очереди на вершине стека');
+      WRITELN('3 - расширить стек (добавить пустую очередь)');
+      WRITELN('4 - сократить стек (убрать верхнюю очередь)');
+      WRITELN('5 - показать содержимое стека');
+      WRITELN('6 - выход');
+      WRITE('Ваш выбор: ');
+      READLN(Ans);
 
-    IF Ans = '1' THEN
-    BEGIN
-      IF Top = NIL THEN
-        WRITELN('Стек пуст, сначала расширьте его.')
+      IF Ans = '1'
+      THEN
+        BEGIN
+          IF Top = NIL
+          THEN
+            WRITELN('Стек пуст, сначала расширьте его.')
+          ELSE
+            BEGIN
+              WRITE('Введите строку: ');
+              READLN(Line);
+              FOR I := 1 TO LENGTH(Line)
+              DO
+                Enqueue(Top^.Q, Line[I]);
+            END;
+        END
       ELSE
-      BEGIN
-        WRITE('Введите строку: ');
-        READLN(Line);
-        FOR I := 1 TO LENGTH(Line) DO
-          Enqueue(Top^.Q, Line[I]);
-      END;
-    END
-    ELSE IF Ans = '2' THEN
-    BEGIN
-      IF Top = NIL THEN
-        WRITELN('Стек пуст.')
-      ELSE IF Dequeue(Top^.Q, Ch) THEN
-        WRITELN('Извлечён элемент: ', Ch)
-      ELSE
-        WRITELN('Очередь на вершине пуста.');
-    END
-    ELSE IF Ans = '3' THEN
-      PushStack
-    ELSE IF Ans = '4' THEN
-    BEGIN
-      IF Top = NIL THEN
-        WRITELN('Стек пуст.')
-      ELSE
-        PopStack;
-    END
-    ELSE IF Ans = '5' THEN
-      ShowStack
-    ELSE IF Ans = '6' THEN
-      Again := FALSE
-    ELSE
-      WRITELN('Неверный выбор.');
-  END;
+        IF Ans = '2'
+        THEN
+          BEGIN
+            IF Top = NIL
+            THEN
+              WRITELN('Стек пуст.')
+            ELSE
+              IF Dequeue(Top^.Q, Ch)
+              THEN
+                WRITELN('Извлечён элемент: ', Ch)
+              ELSE
+                WRITELN('Очередь на вершине пуста.');
+          END
+        ELSE
+          IF Ans = '3'
+          THEN
+            PushStack
+          ELSE
+            IF Ans = '4'
+            THEN
+              BEGIN
+                IF Top = NIL
+                THEN
+                  WRITELN('Стек пуст.')
+                ELSE
+                  PopStack;
+              END
+            ELSE
+              IF Ans = '5'
+              THEN
+                ShowStack
+              ELSE
+                IF Ans = '6'
+                THEN
+                  Again := FALSE
+                ELSE
+                  WRITELN('Неверный выбор.');
+    END;
 
   { очистка памяти }
-  WHILE Top <> NIL DO
+  WHILE Top <> NIL
+  DO
     PopStack;
 END.
